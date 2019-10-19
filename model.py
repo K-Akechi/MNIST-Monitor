@@ -2,19 +2,22 @@ import tensorflow as tf
 
 
 def weight_variable(shape):
-    #initial = tf.truncated_normal(shape, stddev=0.1)
+    # initial = tf.truncated_normal(shape, stddev=0.1)
     return tf.get_variable('weights', dtype='float32',shape=shape, initializer=tf.contrib.layers.xavier_initializer())
 
 
 def bias_variable(shape):
-    #initial = tf.constant(0.1, shape=shape, dtype=float)
+    # initial = tf.constant(0.1, shape=shape, dtype=float)
     return tf.get_variable('bias', shape=shape, dtype='float32', initializer=tf.constant_initializer(0.05))
+
 
 def conv2d(x, W, stride):
     return tf.nn.conv2d(x, W, strides=[1, stride, stride, 1], padding='SAME')
 
+
 def max_pool_2x2(x):
     return tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+
 
 def model1(image, keep_prob):
     with tf.variable_scope('conv1'):
