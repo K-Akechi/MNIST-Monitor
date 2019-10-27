@@ -20,16 +20,16 @@ saver = tf.train.Saver()
 saver.restore(sess, tf.train.latest_checkpoint(model_dir))
 print('restore succeed.')
 
-test_images1 = mnist.test.images[:5000, :]
-test_labels1= mnist.test.labels[:5000, :]
+test_images1 = mnist.test.images[:, :]
+test_labels1 = mnist.test.labels[:, :]
 
-#print(y.eval(session=sess, feed_dict={x: test_images1, y_: test_labels1, keep_prob: 1.0}))
+# print(y.eval(session=sess, feed_dict={x: test_images1, y_: test_labels1, keep_prob: 1.0}))
 print(accuracy.eval(session=sess, feed_dict={x: test_images1, y_: test_labels1, keep_prob: 1.0}))
 
-test_images2 = mnist.test.images[5000:, :]
-test_labels2 = mnist.test.labels[5000:, :]
-
-#print(y.eval(session=sess, feed_dict={x: test_images2, y_: test_labels2, keep_prob: 1.0}))
-print(accuracy.eval(session=sess, feed_dict={x: test_images2, y_: test_labels2, keep_prob: 1.0}))
+# test_images2 = mnist.test.images[5000:, :]
+# test_labels2 = mnist.test.labels[5000:, :]
+#
+# #print(y.eval(session=sess, feed_dict={x: test_images2, y_: test_labels2, keep_prob: 1.0}))
+# print(accuracy.eval(session=sess, feed_dict={x: test_images2, y_: test_labels2, keep_prob: 1.0}))
 
 sess.close()

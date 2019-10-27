@@ -9,13 +9,14 @@ import model
 train_dir = './model2/'
 mnist = input_data.read_data_sets("mnist_data", one_hot=True)
 
+
 def main(argv=None):
     x = tf.placeholder(tf.float32, [None, 784])
     y_ = tf.placeholder(tf.float32, [None, 10])
     image = tf.reshape(x, [-1, 28, 28, 1])
     keep_prob = tf.placeholder(tf.float32)
-    y = model.model2(image, keep_prob)
-    print(y)
+    y, _ = model.model2(image, keep_prob)
+    # print(y)
     loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y_, logits=y))
     train_step = tf.train.AdamOptimizer(1e-4).minimize(loss)
 
@@ -49,7 +50,7 @@ def main(argv=None):
             if step % 2000 == 0:
                 saver.save(sess, train_dir, global_step=step)
         test_batch = mnist.test.next_batch(5000)
-        #print("test accuracy %g" % accuracy.eval(feed_dict={x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
+        # print("test accuracy %g" % accuracy.eval(feed_dict={x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
         print("1st part test accuracy %g" % accuracy.eval(feed_dict={x: test_batch[0], y_: test_batch[1], keep_prob: 1.0}))
         test_batch = mnist.test.next_batch(5000)
         print("2nd part test accuracy %g" % accuracy.eval(feed_dict={x: test_batch[0], y_: test_batch[1], keep_prob: 1.0}))

@@ -45,12 +45,14 @@ def model1(image, keep_prob):
         h_fc1 = tf.nn.relu(tf.matmul(flat, w_fc1) + b_fc1)
         h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 
+    intermediate = h_fc1
+
     with tf.variable_scope('fc2'):
         w_fc2 = weight_variable([1024, 10])
         b_fc2 = bias_variable([10])
         y = tf.matmul(h_fc1_drop, w_fc2) + b_fc2
 
-    return y
+    return y, intermediate
 
 def model2(image, keep_prob):
     with tf.variable_scope('conv1'):
@@ -76,9 +78,11 @@ def model2(image, keep_prob):
         h_fc1 = tf.nn.relu(tf.matmul(flat, w_fc1) + b_fc1)
         h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 
+    intermediate = h_fc1
+
     with tf.variable_scope('fc2'):
         w_fc2 = weight_variable([1024, 10])
         b_fc2 = bias_variable([10])
         y = tf.matmul(h_fc1_drop, w_fc2) + b_fc2
 
-    return y
+    return y, intermediate
