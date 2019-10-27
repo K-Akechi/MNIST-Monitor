@@ -3,19 +3,25 @@ from tensorflow.examples.tutorials.mnist import input_data
 import numpy as np
 import model
 from monitor import napmonitor
+# import sys
+import time
 
+
+# sys.setrecursionlimit(10000)
 
 model_dir = './model2/'
 mnist = input_data.read_data_sets("mnist_data", one_hot=True)
 
 num_classes = 10
-sizeOfNeuronsToMonitor = 1024
+sizeOfNeuronsToMonitor = 50
 
 x = tf.placeholder(tf.float32, [None, 784])
 y_ = tf.placeholder(tf.float32, [None, 10])
 image = tf.reshape(x, [-1, 28, 28, 1])
 keep_prob = tf.placeholder(tf.float32)
 y, intermediate = model.model2(image, keep_prob)
+predicted = tf.argmax(y, 1)
+label = tf.argmax(y_, 1)
 total = mnist.test.labels.shape[0]
 correct = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
 correct = tf.reduce_sum(tf.cast(correct, tf.float32))
@@ -29,7 +35,25 @@ config.gpu_options.allow_growth = True
 with tf.Session(config=config) as sess:
     saver.restore(sess, tf.train.latest_checkpoint(model_dir))
     print('restore succeed.')
-    feed_dict = {x: mnist.test.images[:, :], y_: mnist.test.labels[:, :], keep_prob: 1.0}
+    start_time = time.time()
+    # for i in range(200):
+    #     # print(mnist.test.images[i, :], mnist.test.labels[i, :])
+    #     images = mnist.test.images[i*50:(i+1)*50, :]
+    #     labels = mnist.test.labels[i*50:(i+1)*50, :]
+    #     feed_dict = {x: images, y_: labels, keep_prob: 1.0}
+    #     # print(intermediate.eval(session=sess, feed_dict=feed_dict), predicted.eval(session=sess, feed_dict=feed_dict),
+    #     #       label.eval(session=sess, feed_dict=feed_dict))
+    #
+    #     monitor.addAllNeuronPatternsToClass(intermediate.eval(session=sess, feed_dict=feed_dict),
+    #                                         predicted.eval(session=sess, feed_dict=feed_dict),
+    #                                         label.eval(session=sess, feed_dict=feed_dict), -1)
+    #     print(i*50)
+    images = mnist.test.images[:100, :]
+    labels = mnist.test.labels[:100, :]
+    feed_dict = {x: images, y_: labels, keep_prob: 1.0}
+
     monitor.addAllNeuronPatternsToClass(intermediate.eval(session=sess, feed_dict=feed_dict),
-                                        y.eval(session=sess, feed_dict=feed_dict),
-                                        y_.eval(session=sess, feed_dict=feed_dict), -1)
+                                        predicted.eval(session=sess, feed_dict=feed_dict),
+                                        label.eval(session=sess, feed_dict=feed_dict), -1)
+    duration = time.time() - start_time
+    print('finish in {} seconds.'.format(duration))

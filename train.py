@@ -39,14 +39,14 @@ def main(argv=None):
 
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(sess=sess, coord=coord)
-        for step in range(100000 + 1):
+        for step in range(50000 + 1):
             start_time = time.time()
             batch = mnist.train.next_batch(100)
-            train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
+            train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 1.0})
             duration = time.time() - start_time
             if step % 100 == 0:
                 train_accuracy = accuracy.eval(feed_dict={x: batch[0], y_: batch[1], keep_prob: 1.0})
-                print("step %d, training accuracy %g, %.3fsec" % (step, train_accuracy, duration))
+                print("step %d, training accuracy %g, %.6fsec" % (step, train_accuracy, duration))
             if step % 2000 == 0:
                 saver.save(sess, train_dir, global_step=step)
         test_batch = mnist.test.next_batch(5000)

@@ -25,41 +25,6 @@ def model1(image, keep_prob):
         b_conv1 = bias_variable([32])
         h_conv1 = tf.nn.relu(conv2d(image, w_conv1, 1) + b_conv1)
 
-    with tf.variable_scope('downsample1'):
-        w_downsample1 = weight_variable([5, 5, 32, 32])
-        h_downsample1 = tf.nn.relu(conv2d(h_conv1, w_downsample1, 2))
-
-    with tf.variable_scope('conv2'):
-        w_conv2 = weight_variable([5, 5, 32, 64])
-        b_conv2 = bias_variable([64])
-        h_conv2 = tf.nn.relu(conv2d(h_downsample1, w_conv2, 1) + b_conv2)
-
-    with tf.variable_scope('downsample2'):
-        w_downsample2 = weight_variable([5, 5, 64, 64])
-        h_downsample2 = tf.nn.relu(conv2d(h_conv2, w_downsample2, 2))
-        flat = tf.reshape(h_downsample2, [-1, 7 * 7 * 64])
-
-    with tf.variable_scope('fc1'):
-        w_fc1 = weight_variable([7 * 7 * 64, 1024])
-        b_fc1 = bias_variable([1024])
-        h_fc1 = tf.nn.relu(tf.matmul(flat, w_fc1) + b_fc1)
-        h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
-
-    intermediate = h_fc1
-
-    with tf.variable_scope('fc2'):
-        w_fc2 = weight_variable([1024, 10])
-        b_fc2 = bias_variable([10])
-        y = tf.matmul(h_fc1_drop, w_fc2) + b_fc2
-
-    return y, intermediate
-
-def model2(image, keep_prob):
-    with tf.variable_scope('conv1'):
-        w_conv1 = weight_variable([5, 5, 1, 32])
-        b_conv1 = bias_variable([32])
-        h_conv1 = tf.nn.relu(conv2d(image, w_conv1, 1) + b_conv1)
-
     with tf.variable_scope('maxpool1'):
         h_pool1 = max_pool_2x2(h_conv1)
 
@@ -84,5 +49,49 @@ def model2(image, keep_prob):
         w_fc2 = weight_variable([1024, 10])
         b_fc2 = bias_variable([10])
         y = tf.matmul(h_fc1_drop, w_fc2) + b_fc2
+
+    return y, intermediate
+
+
+def model2(image, keep_prob):
+    with tf.variable_scope('conv1'):
+        w_conv1 = weight_variable([5, 5, 1, 32])
+        b_conv1 = bias_variable([32])
+        h_conv1 = tf.nn.relu(conv2d(image, w_conv1, 1) + b_conv1)
+
+    with tf.variable_scope('maxpool1'):
+        h_pool1 = max_pool_2x2(h_conv1)
+
+    with tf.variable_scope('conv2'):
+        w_conv2 = weight_variable([5, 5, 32, 64])
+        b_conv2 = bias_variable([64])
+        h_conv2 = tf.nn.relu(conv2d(h_pool1, w_conv2, 1) + b_conv2)
+
+    with tf.variable_scope('maxpool2'):
+        h_pool2 = max_pool_2x2(h_conv2)
+        flat = tf.reshape(h_pool2, [-1, 7 * 7 * 64])
+
+    with tf.variable_scope('fc1'):
+        w_fc1 = weight_variable([7 * 7 * 64, 1000])
+        b_fc1 = bias_variable([1000])
+        h_fc1 = tf.nn.relu(tf.matmul(flat, w_fc1) + b_fc1)
+        h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
+
+    with tf.variable_scope('fc2'):
+        w_fc2 = weight_variable([1000, 100])
+        b_fc2 = bias_variable([100])
+        h_fc2 = tf.matmul(h_fc1_drop, w_fc2) + b_fc2
+
+    with tf.variable_scope('fc3'):
+        w_fc3 = weight_variable([100, 50])
+        b_fc3 = bias_variable([50])
+        h_fc3 = tf.matmul(h_fc2, w_fc3) + b_fc3
+
+    intermediate = h_fc3
+
+    with tf.variable_scope('fc4'):
+        w_fc4 = weight_variable([50, 10])
+        b_fc4 = bias_variable([10])
+        y = tf.matmul(h_fc3, w_fc4) + b_fc4
 
     return y, intermediate
