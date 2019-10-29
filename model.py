@@ -129,13 +129,14 @@ def model3(image, keep_prob):
     with tf.variable_scope('fc3'):
         w_fc3 = weight_variable([160, 80])
         b_fc3 = bias_variable([80])
-        h_fc3 = tf.nn.relu(tf.matmul(h_fc2, w_fc3) + b_fc3)
+        h_fc3 = tf.matmul(h_fc2, w_fc3) + b_fc3
+        intermediate = h_fc3
+        h_fc3 = tf.nn.relu(h_fc3)
 
     with tf.variable_scope('fc4'):
         w_fc4 = weight_variable([80, 40])
         b_fc4 = bias_variable([40])
         h_fc4 = tf.matmul(h_fc3, w_fc4) + b_fc4
-        intermediate = h_fc4
         h_fc4 = tf.nn.relu(h_fc4)
 
     with tf.variable_scope('fc5'):
