@@ -38,10 +38,10 @@ with tf.Session(config=config) as sess:
     saver.restore(sess, tf.train.latest_checkpoint(model_dir))
     print('restore succeed.')
     start_time = time.time()
-    for i in range(550):
+    for i in range(110):
         # print(mnist.test.images[i, :], mnist.test.labels[i, :])
-        images = mnist.train.images[i*100:(i+1)*100, :]
-        labels = mnist.train.labels[i*100:(i+1)*100, :]
+        images = mnist.train.images[i*500:(i+1)*500, :]
+        labels = mnist.train.labels[i*500:(i+1)*500, :]
         feed_dict = {x: images, y_: labels, keep_prob: 1.0}
         # print(intermediate.eval(session=sess, feed_dict=feed_dict), predicted.eval(session=sess, feed_dict=feed_dict),
         #       label.eval(session=sess, feed_dict=feed_dict))
@@ -49,7 +49,7 @@ with tf.Session(config=config) as sess:
         monitor.addAllNeuronPatternsToClass(intermediate.eval(session=sess, feed_dict=feed_dict),
                                             predicted.eval(session=sess, feed_dict=feed_dict),
                                             label.eval(session=sess, feed_dict=feed_dict), -1)
-        print(i*100)
+        print(i*500)
     # images = mnist.test.images[:, :]
     # labels = mnist.test.labels[:, :]
     # feed_dict = {x: images, y_: labels, keep_prob: 1.0}
