@@ -78,4 +78,4 @@ with tf.Session(config=config) as sess:
         100 * outofActivationPatternAndResultWrong / (outofActivationPattern)))
     print('Out-of-activation pattern & misclassified / mis-classified: {} %'.format(
         100 * outofActivationPatternAndResultWrong / (total - correct_num)))
-    print(outofActivationPattern, outofActivationPatternAndResultWrong, result, total)
+    print(outofActivationPattern, outofActivationPatternAndResultWrong, correct_num, total)
