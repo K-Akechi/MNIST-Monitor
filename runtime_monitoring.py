@@ -13,7 +13,7 @@ model_dir = './model3/'
 mnist = input_data.read_data_sets("mnist_data", one_hot=True)
 
 num_classes = 10
-sizeOfNeuronsToMonitor = 40
+sizeOfNeuronsToMonitor = 80
 
 x = tf.placeholder(tf.float32, [None, 784])
 y_ = tf.placeholder(tf.float32, [None, 10])
@@ -61,7 +61,7 @@ with tf.Session(config=config) as sess:
     print('finish in {} seconds.'.format(duration))
 
     # Perform run-time monitoring
-    monitor.enlargeSetByOneBitFluctuation(-1)
+    # monitor.enlargeSetByOneBitFluctuation(-1)
     outofActivationPattern = 0
     outofActivationPatternAndResultWrong = 0
     feed_dict = {x: mnist.test.images[:, :], y_: mnist.test.labels[:, :], keep_prob: 1.0}
