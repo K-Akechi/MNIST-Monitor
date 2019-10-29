@@ -61,7 +61,7 @@ with tf.Session(config=config) as sess:
     print('finish in {} seconds.'.format(duration))
 
     # Perform run-time monitoring
-    # monitor.enlargeSetByOneBitFluctuation(-1)
+    monitor.enlargeSetByOneBitFluctuation(-1)
     outofActivationPattern = 0
     outofActivationPatternAndResultWrong = 0
     feed_dict = {x: mnist.test.images[:, :], y_: mnist.test.labels[:, :], keep_prob: 1.0}
