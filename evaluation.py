@@ -25,7 +25,7 @@ test_images1 = mnist.test.images[:, :]
 test_labels1 = mnist.test.labels[:, :]
 
 # print(y.eval(session=sess, feed_dict={x: test_images1, y_: test_labels1, keep_prob: 1.0}))
-print('Accuracy of the network on the 10000 test images: {} %'.format(accuracy.eval(session=sess, feed_dict={x: test_images1, y_: test_labels1, keep_prob: 1.0})))
+print('Accuracy of the network on the 10000 test images: {} %'.format(100 * accuracy.eval(session=sess, feed_dict={x: test_images1, y_: test_labels1, keep_prob: 1.0})))
 
 # test_images2 = mnist.test.images[5000:, :]
 # test_labels2 = mnist.test.labels[5000:, :]
