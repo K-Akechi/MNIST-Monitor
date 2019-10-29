@@ -38,10 +38,10 @@ with tf.Session(config=config) as sess:
     saver.restore(sess, tf.train.latest_checkpoint(model_dir))
     print('restore succeed.')
     start_time = time.time()
-    for i in range(110):
+    for i in range(1100):
         # print(mnist.test.images[i, :], mnist.test.labels[i, :])
-        images = mnist.train.images[i*500:(i+1)*500, :]
-        labels = mnist.train.labels[i*500:(i+1)*500, :]
+        images = mnist.train.images[i*50:(i+1)*50, :]
+        labels = mnist.train.labels[i*50:(i+1)*50, :]
         feed_dict = {x: images, y_: labels, keep_prob: 1.0}
         # print(intermediate.eval(session=sess, feed_dict=feed_dict), predicted.eval(session=sess, feed_dict=feed_dict),
         #       label.eval(session=sess, feed_dict=feed_dict))
@@ -49,7 +49,7 @@ with tf.Session(config=config) as sess:
         monitor.addAllNeuronPatternsToClass(intermediate.eval(session=sess, feed_dict=feed_dict),
                                             predicted.eval(session=sess, feed_dict=feed_dict),
                                             label.eval(session=sess, feed_dict=feed_dict), -1)
-        print(i*500)
+        print(i*50)
     # images = mnist.test.images[:, :]
     # labels = mnist.test.labels[:, :]
     # feed_dict = {x: images, y_: labels, keep_prob: 1.0}
@@ -61,6 +61,7 @@ with tf.Session(config=config) as sess:
     print('finish in {} seconds.'.format(duration))
 
     # Perform run-time monitoring
+    monitor.enlargeSetByOneBitFluctuation(-1)
     outofActivationPattern = 0
     outofActivationPatternAndResultWrong = 0
     feed_dict = {x: mnist.test.images[:, :], y_: mnist.test.labels[:, :], keep_prob: 1.0}
