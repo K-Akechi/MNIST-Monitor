@@ -13,7 +13,7 @@ model_dir = './model3/'
 mnist = input_data.read_data_sets("mnist_data", one_hot=True)
 
 num_classes = 10
-sizeOfNeuronsToMonitor = 40
+sizeOfNeuronsToMonitor = 160
 
 x = tf.placeholder(tf.float32, [None, 784])
 y_ = tf.placeholder(tf.float32, [None, 10])

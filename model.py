@@ -136,11 +136,10 @@ def model3(image, keep_prob):
         b_fc4 = bias_variable([40])
         h_fc4 = tf.matmul(h_fc3, w_fc4) + b_fc4
 
-    intermediate = h_fc4
-
     with tf.variable_scope('fc5'):
         w_fc5 = weight_variable([40, 10])
         b_fc5 = bias_variable([10])
         y = tf.matmul(h_fc4, w_fc5) + b_fc5
 
+    intermediate = h_fc2
     return y, intermediate
