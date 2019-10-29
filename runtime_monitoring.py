@@ -9,17 +9,17 @@ import time
 
 # sys.setrecursionlimit(10000)
 
-model_dir = './model2/'
+model_dir = './model3/'
 mnist = input_data.read_data_sets("mnist_data", one_hot=True)
 
 num_classes = 10
-sizeOfNeuronsToMonitor = 50
+sizeOfNeuronsToMonitor = 40
 
 x = tf.placeholder(tf.float32, [None, 784])
 y_ = tf.placeholder(tf.float32, [None, 10])
 image = tf.reshape(x, [-1, 28, 28, 1])
 keep_prob = tf.placeholder(tf.float32)
-y, intermediate = model.model2(image, keep_prob)
+y, intermediate = model.model3(image, keep_prob)
 predicted = tf.argmax(y, 1)
 label = tf.argmax(y_, 1)
 total = mnist.test.labels.shape[0]
@@ -32,7 +32,7 @@ init = tf.group(tf.global_variables_initializer(), tf.local_variables_initialize
 config = tf.ConfigProto(allow_soft_placement=True)
 config.gpu_options.allow_growth = True
 
-print(mnist.train.images.shape)
+print(mnist.train.images.shape, mnist.test.images.shape)
 
 with tf.Session(config=config) as sess:
     saver.restore(sess, tf.train.latest_checkpoint(model_dir))
