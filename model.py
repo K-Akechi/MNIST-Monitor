@@ -141,5 +141,5 @@ def model3(image, keep_prob):
         b_fc5 = bias_variable([10])
         y = tf.matmul(h_fc4, w_fc5) + b_fc5
 
-    intermediate = h_fc2
+    intermediate = h_fc3
     return y, intermediate
