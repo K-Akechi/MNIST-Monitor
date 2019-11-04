@@ -61,8 +61,9 @@ with tf.Session(config=config) as sess:
     print('finish in {} seconds.'.format(duration))
 
     # Perform run-time monitoring
-    # monitor.enlargeSetByOneBitFluctuation(-1)
-    # monitor.enlargeSetByOneBitFluctuation(-1)
+    monitor.enlargeSetByOneBitFluctuation(-1)
+    monitor.enlargeSetByOneBitFluctuation(-1)
+    monitor.enlargeSetByOneBitFluctuation(-1)
     outofActivationPattern = 0
     outofActivationPatternAndResultWrong = 0
     correct_total = 0
