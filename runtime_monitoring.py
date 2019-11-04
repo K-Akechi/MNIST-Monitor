@@ -65,15 +65,18 @@ with tf.Session(config=config) as sess:
     # monitor.enlargeSetByOneBitFluctuation(-1)
     outofActivationPattern = 0
     outofActivationPatternAndResultWrong = 0
-    feed_dict = {x: mnist.test.images[:, :], y_: mnist.test.labels[:, :], keep_prob: 1.0}
-    predictedNp, intermediateValues, labels, correct_num = sess.run([predicted, intermediate, label, correct], feed_dict=feed_dict)
-    print(predictedNp, labels)
-    result = (predictedNp == labels)
-    for exampleIndex in range(intermediateValues.shape[0]):
-        if not monitor.isPatternContained(intermediateValues[exampleIndex, :], predictedNp[exampleIndex]):
-            outofActivationPattern += 1
-            if result[exampleIndex] == False:
-                outofActivationPatternAndResultWrong += 1
+    correct_total = 0
+    for i in range(100):
+        feed_dict = {x: mnist.test.images[i:i*100, :], y_: mnist.test.labels[i:i*100, :], keep_prob: 1.0}
+        predictedNp, intermediateValues, labels, correct_num = sess.run([predicted, intermediate, label, correct], feed_dict=feed_dict)
+        print(predictedNp, labels)
+        result = (predictedNp == labels)
+        correct_total += correct_num
+        for exampleIndex in range(intermediateValues.shape[0]):
+            if not monitor.isPatternContained(intermediateValues[exampleIndex, :], predictedNp[exampleIndex]):
+                outofActivationPattern += 1
+                if result[exampleIndex] == False:
+                    outofActivationPatternAndResultWrong += 1
     print('Accuracy of the network on the 10000 test images: {} %'.format(100 * correct_num / total))
     print('Out-of-activation pattern on the 10000 test images: {} %'.format(100 * outofActivationPattern / total))
     print('Out-of-activation pattern & misclassified / out-of-activation pattern : {} %'.format(
