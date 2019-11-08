@@ -3,7 +3,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import metrics, mixture
-from sklearn.cluster import KMeans, SpectralClustering, MeanShift, estimate_bandwidth
+from sklearn.cluster import KMeans, SpectralClustering, AgglomerativeClustering
 import pandas as pd
 from sklearn.manifold import TSNE
 import model
@@ -82,8 +82,9 @@ with tf.Session() as sess:
     # gmm = mixture.GaussianMixture(n_components=10, random_state=9)
     # gmm.fit(samples)
     # bandwidth = estimate_bandwidth(samples, quantile=0.2, n_samples=1000)
-    ms = MeanShift(bin_seeding=True).fit(samples)
-    y_pred = ms.labels_
+    # ms = MeanShift(bin_seeding=True).fit(samples)
+    agg = AgglomerativeClustering().fit(samples)
+    y_pred = agg.predict(samples)
     # y_pred = km.predict(samples)
     # y_pred = gmm.predict(samples)
     # y_pred = dbscan.labels_
