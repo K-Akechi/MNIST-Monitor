@@ -2,8 +2,8 @@ import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn import metrics
-from sklearn.cluster import KMeans
+from sklearn import metrics, mixture
+from sklearn.cluster import KMeans, SpectralClustering, MeanShift, estimate_bandwidth
 import pandas as pd
 from sklearn.manifold import TSNE
 import model
@@ -77,33 +77,43 @@ with tf.Session() as sess:
 
     # print(samples, pred.shape, ground.shape)
     start_time = time.time()
-    km = KMeans(n_clusters=10, random_state=9, n_jobs=-1)
-    km.fit(samples)
-    y_pred = km.predict(samples)
+    # km = KMeans(n_clusters=10, random_state=9, n_jobs=-1)
+    # km.fit(samples)
+    # gmm = mixture.GaussianMixture(n_components=10, random_state=9)
+    # gmm.fit(samples)
+    bandwidth = estimate_bandwidth(samples, quantile=0.2, n_samples=1000)
+    ms = MeanShift(bandwidth=bandwidth, bin_seeding=True).fit(samples)
+    y_pred = ms.labels_
+    # y_pred = km.predict(samples)
+    # y_pred = gmm.predict(samples)
+    # y_pred = dbscan.labels_
     duration = time.time() - start_time
     print('{}seconds'.format(duration))
-    centers = km.cluster_centers_
+    # centers = km.cluster_centers_
+    print(y_pred)
     print(metrics.calinski_harabaz_score(samples, y_pred))
     stat = np.zeros((10, 10), dtype=int)
     for i in range(samples.shape[0]):
         stat[y_pred[i]][ground[i]] += 1
     print(stat)
 
-    y_test = km.predict(samples_test)
-    out_of_cluster = 0
-    out_of_cluster_and_mis = 0
-    mis_classified = 0
-    correct = 0
-    index = np.array([9, 3, 0, 6, 2, 4, 8, 1, 5, 7])
-    for i in range(10000):
-        if pred_test[i] != ground_test[i]:
-            mis_classified += 1
-            if index[y_test[i]] != pred_test[i]:
-                out_of_cluster_and_mis += 1
-        else:
-            correct += 1
-        if index[y_test[i]] != pred_test[i]:
-            out_of_cluster += 1
-    print(out_of_cluster, out_of_cluster_and_mis, mis_classified, correct)
+    # y_test = km.predict(samples_test)
+    # y_test = gmm.predict(samples_test)
+    # # y_test = dbscan.predict(samples_test)
+    # out_of_cluster = 0
+    # out_of_cluster_and_mis = 0
+    # mis_classified = 0
+    # correct = 0
+    # index = np.array([9, 3, 0, 6, 2, 4, 8, 1, 5, 7])
+    # for i in range(10000):
+    #     if pred_test[i] != ground_test[i]:
+    #         mis_classified += 1
+    #         if index[y_test[i]] != pred_test[i]:
+    #             out_of_cluster_and_mis += 1
+    #     else:
+    #         correct += 1
+    #     if index[y_test[i]] != pred_test[i]:
+    #         out_of_cluster += 1
+    # print(out_of_cluster, out_of_cluster_and_mis, mis_classified, correct)
 
 
