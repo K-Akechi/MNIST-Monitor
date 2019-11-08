@@ -81,8 +81,8 @@ with tf.Session() as sess:
     # km.fit(samples)
     # gmm = mixture.GaussianMixture(n_components=10, random_state=9)
     # gmm.fit(samples)
-    bandwidth = estimate_bandwidth(samples, quantile=0.2, n_samples=1000)
-    ms = MeanShift(bandwidth=bandwidth, bin_seeding=True).fit(samples)
+    # bandwidth = estimate_bandwidth(samples, quantile=0.2, n_samples=1000)
+    ms = MeanShift(bin_seeding=True).fit(samples)
     y_pred = ms.labels_
     # y_pred = km.predict(samples)
     # y_pred = gmm.predict(samples)
