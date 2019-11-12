@@ -26,9 +26,23 @@ def meanshift(samples, samples_to_predict):
     return ms.predict(samples_to_predict)
 
 
+def spectral(samples, n_clusters, samples_to_predict):
+    sc = cluster.SpectralClustering(n_clusters=n_clusters, n_jobs=-1)
+    # concat = np.concatenate((samples, samples_to_predict), axis=0)
+    sc.fit(samples_to_predict)
+    result = sc.labels_
+    return result
+
+
+def agglomerative(samples, n_clusters, samples_to_predict):
+    agg = cluster.AgglomerativeClustering(n_clusters=n_clusters)
+    agg.fit(samples)
+    return agg.labels_
+
+
 if __name__ == '__main__':
     n = 10
-
+    f = open('result.md', 'w')
     interValues_train = np.load('training_set_neuron_outputs.npy')
     labels_train = np.load('training_set_labels.npy')
     interValues_test = np.load('test_set_neuron_outputs.npy')
@@ -39,9 +53,15 @@ if __name__ == '__main__':
     stat = np.zeros((n, 10), dtype=int)
     start_time = time.time()
     # kmeans_result = kmeans(interValues_train, n, interValues_train)
-    meanshift_result = meanshift(interValues_train, interValues_train)
+    # meanshift_result = meanshift(interValues_train, interValues_train)
+    # spectral_result = spectral(interValues_train, n, interValues_test)
+    agg_result = agglomerative(interValues_train, n, interValues_train)
     duration = time.time() - start_time
     print('clustering finish in {} seconds'.format(duration))
+    f.write('clustering finish in {} seconds\n'.format(duration))
     for i in range(interValues_train.shape[0]):
-        stat[meanshift_result[i]][labels_train[i]] += 1
+        stat[agg_result[i]][labels_train[i]] += 1
     print(stat)
+    print(stat, file=f)
+    index = np.argmax(stat, axis=1)
+
