@@ -29,7 +29,7 @@ def meanshift(samples, samples_to_predict):
 def spectral(samples, n_clusters, samples_to_predict):
     sc = cluster.SpectralClustering(n_clusters=n_clusters, n_jobs=-1)
     # concat = np.concatenate((samples, samples_to_predict), axis=0)
-    sc.fit(samples_to_predict)
+    sc.fit(samples)
     result = sc.labels_
     return result
 
