@@ -34,6 +34,12 @@ def dbscan(samples, samples_to_predict):
     return db.labels_
 
 
+def optic(samples, samples_to_predict):
+    op = cluster.OPTICS(min_samples=2, n_jobs=-1)
+    op.fit(samples)
+    return op.labels_
+
+
 def spectral(samples, n_clusters, samples_to_predict):
     sc = cluster.SpectralClustering(n_clusters=n_clusters, n_jobs=-1)
     # concat = np.concatenate((samples, samples_to_predict), axis=0)
@@ -44,8 +50,9 @@ def spectral(samples, n_clusters, samples_to_predict):
 
 def agglomerative(samples, n_clusters, samples_to_predict):
     agg = cluster.AgglomerativeClustering(n_clusters=n_clusters)
-    agg.fit(samples)
-    return agg.labels_
+    concat = np.concatenate((samples, samples_to_predict), axis=0)
+    result = agg.fit_predict(concat)
+    return result[:samples.shape[0]], result[samples.shape[0]:]
 
 
 def affinitypropagation(samples, samples_to_predict):
@@ -77,16 +84,17 @@ if __name__ == '__main__':
     # gmm_train_result, gmm_test_result = gaussian(interValues_train, n, interValues_test)
     # meanshift_result = meanshift(interValues_train, interValues_test)
     # spectral_result = spectral(c)
-    # agg_result = agglomerative(interValues_train, n, interValues_test)
+    agg_train_result, agg_test_result = agglomerative(interValues_train, n, interValues_test)
     # dbscan_result = dbscan(interValues_train, interValues_test)
     # birch_train_result, birch_test_result = birch(interValues_train, n, interValues_test)
-    aff_train_result, aff_test_result = affinitypropagation(interValues_train, interValues_test)
+    # aff_train_result, aff_test_result = affinitypropagation(interValues_train, interValues_test)
+    # optic_train_result = optic(interValues_train, interValues_test)
     duration = time.time() - start_time
     print('clustering finish in {} seconds'.format(duration))
     f.write('clustering finish in {} seconds\n'.format(duration))
 
     for i in range(interValues_train.shape[0]):
-        stat[aff_train_result[i]][labels_train[i]] += 1
+        stat[agg_train_result[i]][labels_train[i]] += 1
     print(stat)
     print(stat, file=f)
     index = np.argmax(stat, axis=1)
@@ -98,7 +106,7 @@ if __name__ == '__main__':
     for i in range(interValues_test.shape[0]):
         if predictions_test[i] == labels_test[i]:
             correct += 1
-        if index[aff_test_result[i]] != predictions_test[i]:
+        if index[agg_test_result[i]] != predictions_test[i]:
             out_of_cluster += 1
             if predictions_test[i] != labels_test[i]:
                 ooc_and_misclassified += 1
