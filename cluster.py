@@ -80,11 +80,11 @@ if __name__ == '__main__':
     stat = np.zeros((n, 10), dtype=int)
     stat_test = np.zeros((n, 10), dtype=int)
     start_time = time.time()
-    # kmeans_train_result, kmeans_test_result = kmeans(interValues_train, n, interValues_test)
+    kmeans_train_result, kmeans_test_result = kmeans(interValues_train, n, interValues_test)
     # gmm_train_result, gmm_test_result = gaussian(interValues_train, n, interValues_test)
     # meanshift_result = meanshift(interValues_train, interValues_test)
     # spectral_result = spectral(c)
-    agg_train_result, agg_test_result = agglomerative(interValues_train, n, interValues_test)
+    # agg_train_result, agg_test_result = agglomerative(interValues_train, n, interValues_test)
     # dbscan_result = dbscan(interValues_train, interValues_test)
     # birch_train_result, birch_test_result = birch(interValues_train, n, interValues_test)
     # aff_train_result, aff_test_result = affinitypropagation(interValues_train, interValues_test)
@@ -94,7 +94,7 @@ if __name__ == '__main__':
     f.write('clustering finish in {} seconds\n'.format(duration))
 
     for i in range(interValues_train.shape[0]):
-        stat[agg_train_result[i]][labels_train[i]] += 1
+        stat[kmeans_train_result[i]][labels_train[i]] += 1
     print(stat)
     print(stat, file=f)
     index = np.argmax(stat, axis=1)
@@ -106,7 +106,7 @@ if __name__ == '__main__':
     for i in range(interValues_test.shape[0]):
         if predictions_test[i] == labels_test[i]:
             correct += 1
-        if index[agg_test_result[i]] != predictions_test[i]:
+        if index[kmeans_test_result[i]] != predictions_test[i]:
             out_of_cluster += 1
             if predictions_test[i] != labels_test[i]:
                 ooc_and_misclassified += 1
