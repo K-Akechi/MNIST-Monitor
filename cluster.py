@@ -20,10 +20,18 @@ def gaussian(samples, n_clusters, samples_to_predict):
 
 
 def meanshift(samples, samples_to_predict):
-    bandwidth = cluster.estimate_bandwidth(samples, n_jobs=-1)
+    # bandwidth = cluster.estimate_bandwidth(samples, n_jobs=-1, n_samples=10000, quantile=0.2)
+    bandwidth = 60
+    print('bandwidth: {}'.format(bandwidth))
     ms = cluster.MeanShift(bandwidth=bandwidth, n_jobs=-1)
     ms.fit(samples)
     return ms.predict(samples_to_predict)
+
+
+def dbscan(samples, samples_to_predict):
+    db = cluster.DBSCAN(eps=1e-15, min_samples=2)
+    db.fit(samples)
+    return db.labels_
 
 
 def spectral(samples, n_clusters, samples_to_predict):
@@ -40,6 +48,12 @@ def agglomerative(samples, n_clusters, samples_to_predict):
     return agg.labels_
 
 
+def birch(samples, n_clusters, samples_to_predict):
+    brc = cluster.Birch(n_clusters=n_clusters)
+    brc.fit(samples)
+    return brc.predict(samples), brc.predict(samples_to_predict)
+
+
 if __name__ == '__main__':
     n = 10
     f = open('result.md', 'w')
@@ -54,14 +68,32 @@ if __name__ == '__main__':
     start_time = time.time()
     # kmeans_result = kmeans(interValues_train, n, interValues_train)
     # meanshift_result = meanshift(interValues_train, interValues_train)
-    # spectral_result = spectral(interValues_train, n, interValues_test)
-    agg_result = agglomerative(interValues_train, n, interValues_train)
+    # spectral_result = spectral(c)
+    # agg_result = agglomerative(interValues_train, n, interValues_train)
+    # dbscan_result = dbscan(interValues_train, interValues_train)
+    birch_train_result, birch_test_result = birch(interValues_train, n, interValues_train)
     duration = time.time() - start_time
     print('clustering finish in {} seconds'.format(duration))
     f.write('clustering finish in {} seconds\n'.format(duration))
+
     for i in range(interValues_train.shape[0]):
-        stat[agg_result[i]][labels_train[i]] += 1
+        stat[birch_train_result[i]][labels_train[i]] += 1
     print(stat)
     print(stat, file=f)
     index = np.argmax(stat, axis=1)
+    print(index)
+
+    correct = 0
+    out_of_cluster = 0
+    ooc_and_misclassified = 0
+    for i in range(interValues_test.shape[0]):
+        if predictions_test[i] == labels_test[i]:
+            correct += 1
+        if index[birch_test_result[i]] != predictions_test[i]:
+            out_of_cluster += 1
+            if predictions_test[i] != labels_test[i]:
+                ooc_and_misclassified += 1
+
+    print(ooc_and_misclassified, out_of_cluster, interValues_test.shape[0] - correct, correct)
+
 
