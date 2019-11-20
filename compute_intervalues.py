@@ -1,6 +1,8 @@
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 import numpy as np
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
 import model
 
 model_dir = './model3/'
@@ -71,3 +73,14 @@ with tf.Session() as sess:
     np.save('test_set_neuron_outputs', samples_test)
     np.save('test_set_predictions', pred_test)
     np.save('test_set_labels', label_test)
+
+    color = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
+             '#17becf']
+    pca = PCA(n_components=2)
+    pca.fit(samples)
+    samples_reduction = pca.transform(samples)
+    plt.figure(1)
+    for i in range(10):
+        print(samples_reduction[ground == i, 0].shape)
+        plt.scatter(samples_reduction[ground == i, 0], samples_reduction[ground == i, 1], c=color[i], marker='o', s=2, linewidths=0, alpha=0.8, label='%s' % i)
+    plt.show()

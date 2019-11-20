@@ -81,9 +81,9 @@ if __name__ == '__main__':
     stat_test = np.zeros((n, 10), dtype=int)
     start_time = time.time()
     # kmeans_train_result, kmeans_test_result = kmeans(interValues_train, n, interValues_test)
-    # gmm_train_result, gmm_test_result = gaussian(interValues_train, n, interValues_test)
+    gmm_train_result, gmm_test_result = gaussian(interValues_train, n, interValues_test)
     # meanshift_result = meanshift(interValues_train, interValues_test)
-    spectral_train_result, spectral_test_result = spectral(interValues_train, n, interValues_test)
+    # spectral_train_result, spectral_test_result = spectral(interValues_train, n, interValues_test)
     # agg_train_result, agg_test_result = agglomerative(interValues_train, n, interValues_test)
     # dbscan_result = dbscan(interValues_train, interValues_test)
     # birch_train_result, birch_test_result = birch(interValues_train, n, interValues_test)
@@ -94,7 +94,7 @@ if __name__ == '__main__':
     f.write('clustering finish in {} seconds\n'.format(duration))
 
     for i in range(interValues_train.shape[0]):
-        stat[spectral_train_result[i]][labels_train[i]] += 1
+        stat[gmm_train_result[i]][labels_train[i]] += 1
     print(stat)
     print(stat, file=f)
     index = np.argmax(stat, axis=1)
@@ -103,14 +103,18 @@ if __name__ == '__main__':
     correct = 0
     out_of_cluster = 0
     ooc_and_misclassified = 0
+    print('Here are the misclassified samples:')
     for i in range(interValues_test.shape[0]):
         if predictions_test[i] == labels_test[i]:
             correct += 1
-        if index[spectral_test_result[i]] != predictions_test[i]:
+        else:
+            print('sample{}:  label:{}  neural net prediction:{}  clustering result:{}'.format(i, labels_test[i],
+                                                                                            predictions_test[i],
+                                                                                            index[gmm_test_result[i]]))
+        if index[gmm_test_result[i]] != predictions_test[i]:
             out_of_cluster += 1
             if predictions_test[i] != labels_test[i]:
                 ooc_and_misclassified += 1
 
     print(ooc_and_misclassified, out_of_cluster, interValues_test.shape[0] - correct, correct)
-
 
