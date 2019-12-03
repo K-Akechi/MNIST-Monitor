@@ -72,27 +72,22 @@ def model2(image, keep_prob):
         flat = tf.reshape(h_pool2, [-1, 7 * 7 * 64])
 
     with tf.variable_scope('fc1'):
-        w_fc1 = weight_variable([7 * 7 * 64, 1000])
-        b_fc1 = bias_variable([1000])
+        w_fc1 = weight_variable([7 * 7 * 64, 120])
+        b_fc1 = bias_variable([120])
         h_fc1 = tf.nn.relu(tf.matmul(flat, w_fc1) + b_fc1)
         h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 
     with tf.variable_scope('fc2'):
-        w_fc2 = weight_variable([1000, 100])
-        b_fc2 = bias_variable([100])
-        h_fc2 = tf.nn.relu(tf.matmul(h_fc1_drop, w_fc2) + b_fc2)
+        w_fc2 = weight_variable([120, 84])
+        b_fc2 = bias_variable([84])
+        h_fc2 = tf.matmul(h_fc1_drop, w_fc2) + b_fc2
+        intermediate = h_fc2
+        tf.nn.relu(h_fc2)
 
     with tf.variable_scope('fc3'):
-        w_fc3 = weight_variable([100, 50])
-        b_fc3 = bias_variable([50])
-        h_fc3 = tf.matmul(h_fc2, w_fc3) + b_fc3
-        intermediate = h_fc3
-        h_fc3 = tf.nn.relu(h_fc3)
-
-    with tf.variable_scope('fc4'):
-        w_fc4 = weight_variable([50, 10])
-        b_fc4 = bias_variable([10])
-        y = tf.matmul(h_fc3, w_fc4) + b_fc4
+        w_fc3 = weight_variable([84, 10])
+        b_fc3 = bias_variable([10])
+        y = tf.matmul(h_fc2, w_fc3) + b_fc3
 
     return y, intermediate
 

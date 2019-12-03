@@ -4,7 +4,7 @@ import numpy as np
 import model
 from monitor import napmonitor
 
-model_dir = './model3/'
+model_dir = './model2/'
 mnist = input_data.read_data_sets("mnist_data", one_hot=True)
 
 x = tf.placeholder(tf.float32, [None, 784])

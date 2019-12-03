@@ -4,13 +4,14 @@ from sklearn import metrics, mixture, cluster
 import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
+from scipy.spatial.distance import pdist
 import time
 
 
 def kmeans(samples, n_clusters, samples_to_predict):
     km = cluster.KMeans(n_clusters=n_clusters, n_jobs=-1)
     km.fit(samples)
-    return km.predict(samples), km.predict(samples_to_predict)
+    return km.predict(samples), km.predict(samples_to_predict), km.cluster_centers_
 
 
 def gaussian(samples, n_clusters, samples_to_predict):
@@ -80,8 +81,8 @@ if __name__ == '__main__':
     stat = np.zeros((n, 10), dtype=int)
     stat_test = np.zeros((n, 10), dtype=int)
     start_time = time.time()
-    # kmeans_train_result, kmeans_test_result = kmeans(interValues_train, n, interValues_test)
-    gmm_train_result, gmm_test_result = gaussian(interValues_train, n, interValues_test)
+    kmeans_train_result, kmeans_test_result, centers = kmeans(interValues_train, n, interValues_test)
+    # gmm_train_result, gmm_test_result = gaussian(interValues_train, n, interValues_test)
     # meanshift_result = meanshift(interValues_train, interValues_test)
     # spectral_train_result, spectral_test_result = spectral(interValues_train, n, interValues_test)
     # agg_train_result, agg_test_result = agglomerative(interValues_train, n, interValues_test)
@@ -93,8 +94,9 @@ if __name__ == '__main__':
     print('clustering finish in {} seconds'.format(duration))
     f.write('clustering finish in {} seconds\n'.format(duration))
 
+    print(centers[0, :].shape)
     for i in range(interValues_train.shape[0]):
-        stat[gmm_train_result[i]][labels_train[i]] += 1
+        stat[kmeans_train_result[i]][labels_train[i]] += 1
     print(stat)
     print(stat, file=f)
     index = np.argmax(stat, axis=1)
@@ -109,12 +111,18 @@ if __name__ == '__main__':
             correct += 1
         else:
             print('sample{}:  label:{}  neural net prediction:{}  clustering result:{}'.format(i, labels_test[i],
-                                                                                            predictions_test[i],
-                                                                                            index[gmm_test_result[i]]))
-        if index[gmm_test_result[i]] != predictions_test[i]:
+                                                                                               predictions_test[i],
+                                                                                               index[kmeans_test_result[i]]))
+            for j in range(10):
+                print('distance to center{}: {}'.format(index[j], pdist(np.vstack([centers[j, :], interValues_test[i, :]]))))
+        if index[kmeans_test_result[i]] != predictions_test[i]:
             out_of_cluster += 1
             if predictions_test[i] != labels_test[i]:
                 ooc_and_misclassified += 1
 
     print(ooc_and_misclassified, out_of_cluster, interValues_test.shape[0] - correct, correct)
-
+    dist = np.zeros((10, 10), dtype=float)
+    for i in range(10):
+        for j in range(10):
+            dist[index[i]][index[j]] = pdist(np.vstack([centers[i, :], centers[j, :]]))
+    print(dist)
