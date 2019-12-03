@@ -70,7 +70,7 @@ def birch(samples, n_clusters, samples_to_predict):
 
 if __name__ == '__main__':
     n = 10
-    f = open('result.md', 'w')
+    # f = open('result.md', 'w')
     interValues_train = np.load('training_set_neuron_outputs.npy')
     labels_train = np.load('training_set_labels.npy')
     interValues_test = np.load('test_set_neuron_outputs.npy')
@@ -81,24 +81,24 @@ if __name__ == '__main__':
     stat = np.zeros((n, 10), dtype=int)
     stat_test = np.zeros((n, 10), dtype=int)
     start_time = time.time()
-    kmeans_train_result, kmeans_test_result, centers = kmeans(interValues_train, n, interValues_test)
+    # kmeans_train_result, kmeans_test_result, centers = kmeans(interValues_train, n, interValues_test)
     # gmm_train_result, gmm_test_result = gaussian(interValues_train, n, interValues_test)
     # meanshift_result = meanshift(interValues_train, interValues_test)
     # spectral_train_result, spectral_test_result = spectral(interValues_train, n, interValues_test)
     # agg_train_result, agg_test_result = agglomerative(interValues_train, n, interValues_test)
     # dbscan_result = dbscan(interValues_train, interValues_test)
-    # birch_train_result, birch_test_result = birch(interValues_train, n, interValues_test)
+    birch_train_result, birch_test_result = birch(interValues_train, n, interValues_test)
     # aff_train_result, aff_test_result = affinitypropagation(interValues_train, interValues_test)
     # optic_train_result = optic(interValues_train, interValues_test)
     duration = time.time() - start_time
     print('clustering finish in {} seconds'.format(duration))
-    f.write('clustering finish in {} seconds\n'.format(duration))
+    # f.write('clustering finish in {} seconds\n'.format(duration))
 
-    print(centers[0, :].shape)
+    # print(centers[0, :].shape)
     for i in range(interValues_train.shape[0]):
-        stat[kmeans_train_result[i]][labels_train[i]] += 1
+        stat[birch_train_result[i]][labels_train[i]] += 1
     print(stat)
-    print(stat, file=f)
+    # print(stat, file=f)
     index = np.argmax(stat, axis=1)
     print(index)
 
@@ -112,17 +112,17 @@ if __name__ == '__main__':
         else:
             print('sample{}:  label:{}  neural net prediction:{}  clustering result:{}'.format(i, labels_test[i],
                                                                                                predictions_test[i],
-                                                                                               index[kmeans_test_result[i]]))
-            for j in range(10):
-                print('distance to center{}: {}'.format(index[j], pdist(np.vstack([centers[j, :], interValues_test[i, :]]))))
-        if index[kmeans_test_result[i]] != predictions_test[i]:
+                                                                                               index[birch_test_result[i]]))
+            # for j in range(10):
+            #     print('distance to center{}: {}'.format(index[j], pdist(np.vstack([centers[j, :], interValues_test[i, :]]))))
+        if index[birch_test_result[i]] != predictions_test[i]:
             out_of_cluster += 1
             if predictions_test[i] != labels_test[i]:
                 ooc_and_misclassified += 1
 
     print(ooc_and_misclassified, out_of_cluster, interValues_test.shape[0] - correct, correct)
     dist = np.zeros((10, 10), dtype=float)
-    for i in range(10):
-        for j in range(10):
-            dist[index[i]][index[j]] = pdist(np.vstack([centers[i, :], centers[j, :]]))
-    print(dist)
+    # for i in range(10):
+    #     for j in range(10):
+    #         dist[index[i]][index[j]] = pdist(np.vstack([centers[i, :], centers[j, :]]))
+    # print(dist)

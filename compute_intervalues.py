@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 import numpy as np
 from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 import model
 
@@ -76,9 +77,8 @@ with tf.Session() as sess:
 
     color = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
              '#17becf']
-    pca = PCA(n_components=2)
-    pca.fit(samples)
-    samples_reduction = pca.transform(samples)
+    pca = TSNE(n_components=2)
+    samples_reduction = pca.fit_transform(samples)
     plt.figure(1)
     for i in range(10):
         print(samples_reduction[ground == i, 0].shape)
