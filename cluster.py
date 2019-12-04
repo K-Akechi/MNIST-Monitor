@@ -15,7 +15,7 @@ def kmeans(samples, n_clusters, samples_to_predict):
 
 
 def gaussian(samples, n_clusters, samples_to_predict):
-    gmm = mixture.GaussianMixture(n_components=n_clusters)
+    gmm = mixture.GaussianMixture(n_components=n_clusters, covariance_type='diag', init_params='random')
     gmm.fit(samples)
     return gmm.predict(samples), gmm.predict(samples_to_predict)
 
@@ -63,7 +63,7 @@ def affinitypropagation(samples, samples_to_predict):
 
 
 def birch(samples, n_clusters, samples_to_predict):
-    brc = cluster.Birch(n_clusters=n_clusters)
+    brc = cluster.Birch(n_clusters=n_clusters, threshold=0.3)
     brc.fit(samples)
     return brc.predict(samples), brc.predict(samples_to_predict)
 
