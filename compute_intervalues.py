@@ -6,14 +6,14 @@ from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 import model
 
-model_dir = './model2/'
+model_dir = './lenet-5/'
 mnist = input_data.read_data_sets("mnist_data", one_hot=True)
 
 x = tf.placeholder(tf.float32, [None, 784])
 y_ = tf.placeholder(tf.float32, [None, 10])
 image = tf.reshape(x, [-1, 28, 28, 1])
 keep_prob = tf.placeholder(tf.float32)
-y, intermediate = model.model2(image, keep_prob)
+y, intermediate, conv1, conv2 = model.lenet_5(image, keep_prob)
 predicted = tf.argmax(y, 1)
 label = tf.argmax(y_, 1)
 correct = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
@@ -28,25 +28,69 @@ with tf.Session() as sess:
     print('restore succeed.')
 
     samples = []
+    neg_samples = []
     # pred = []
     ground = []
+    neg_predict = []
+    neg_ground = []
+    c1 = []
+    c2 = []
     equal = 0
-
+    flag = True
+    stat = np.zeros(10)
     for i in range(55000):
         images = mnist.train.images[i:i+1, :]
         labels = mnist.train.labels[i:i+1, :]
         feed_dict = {x: images, y_: labels, keep_prob: 1.0}
-        intermediateValues, predictedNp, labelNp, = sess.run([intermediate, predicted, label], feed_dict=feed_dict)
+        intermediateValues, predictedNp, labelNp, weight_fc2 = sess.run([intermediate, predicted, label, conv1], feed_dict=feed_dict)
+        # stat[labelNp[0]] += 1
         if predictedNp == labelNp:
             equal += 1
             samples.extend(intermediateValues)
             ground.extend(labelNp)
+        # if flag:
+            c1.extend(weight_fc2)
+            # c2.extend(weight_fc3)
+            # flag = False
+        else:
+            neg_samples.extend(intermediateValues)
+            neg_predict.extend(predictedNp)
+            neg_ground.extend(labelNp)
+
+    for i in range(5000):
+        images = mnist.validation.images[i:i + 1, :]
+        labels = mnist.validation.labels[i:i + 1, :]
+        feed_dict = {x: images, y_: labels, keep_prob: 1.0}
+        intermediateValues, predictedNp, labelNp, weight_fc2 = sess.run([intermediate, predicted, label, conv1], feed_dict=feed_dict)
+        # stat[labelNp[0]] += 1
+        if predictedNp == labelNp:
+            equal += 1
+            samples.extend(intermediateValues)
+            ground.extend(labelNp)
+        # if flag:
+            c1.extend(weight_fc2)
+            # c2.extend(weight_fc3)
+            # flag = False
+        else:
+            neg_samples.extend(intermediateValues)
+            neg_predict.extend(predictedNp)
+            neg_ground.extend(labelNp)
 
     samples = np.array(samples)
     ground = np.array(ground)
+    neg_samples = np.array(neg_samples)
+    neg_predict = np.array(neg_predict)
+    neg_ground = np.array(neg_ground)
+    print(equal)
     print(samples.shape, ground.shape)
+    print(stat)
     np.save('training_set_neuron_outputs', samples)
     np.save('training_set_labels', ground)
+    np.save('training_set_error_outputs', neg_samples)
+    np.save('training_set_error_predicts', neg_predict)
+    np.save('training_set_error_labels', neg_ground)
+    np.save('conv1', c1)
+    # np.save('conv2', c2)
 
     samples_test = []
     pred_test = []

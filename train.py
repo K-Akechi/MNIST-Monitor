@@ -6,7 +6,7 @@ import os
 import time
 import model
 
-train_dir = './model2/'
+train_dir = './lenet-5/'
 mnist = input_data.read_data_sets("mnist_data", one_hot=True)
 
 
@@ -15,7 +15,7 @@ def main(argv=None):
     y_ = tf.placeholder(tf.float32, [None, 10])
     image = tf.reshape(x, [-1, 28, 28, 1])
     keep_prob = tf.placeholder(tf.float32)
-    y, _ = model.model2(image, keep_prob)
+    y, _, _, _ = model.lenet_5(image, keep_prob)
     # print(y)
     loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y_, logits=y))
     train_step = tf.train.AdamOptimizer(1e-3).minimize(loss)
@@ -42,7 +42,7 @@ def main(argv=None):
         for step in range(50000 + 1):
             start_time = time.time()
             batch = mnist.train.next_batch(100)
-            train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 1.0})
+            train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
             duration = time.time() - start_time
             if step % 100 == 0:
                 valid_batch = mnist.validation.next_batch(100)
