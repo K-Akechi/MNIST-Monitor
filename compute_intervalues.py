@@ -57,24 +57,24 @@ with tf.Session() as sess:
             neg_predict.extend(predictedNp)
             neg_ground.extend(labelNp)
 
-    for i in range(5000):
-        images = mnist.validation.images[i:i + 1, :]
-        labels = mnist.validation.labels[i:i + 1, :]
-        feed_dict = {x: images, y_: labels, keep_prob: 1.0}
-        intermediateValues, predictedNp, labelNp, weight_fc2 = sess.run([intermediate, predicted, label, conv1], feed_dict=feed_dict)
-        # stat[labelNp[0]] += 1
-        if predictedNp == labelNp:
-            equal += 1
-            samples.extend(intermediateValues)
-            ground.extend(labelNp)
-        # if flag:
-            c1.extend(weight_fc2)
-            # c2.extend(weight_fc3)
-            # flag = False
-        else:
-            neg_samples.extend(intermediateValues)
-            neg_predict.extend(predictedNp)
-            neg_ground.extend(labelNp)
+    # for i in range(5000):
+    #     images = mnist.validation.images[i:i + 1, :]
+    #     labels = mnist.validation.labels[i:i + 1, :]
+    #     feed_dict = {x: images, y_: labels, keep_prob: 1.0}
+    #     intermediateValues, predictedNp, labelNp, weight_fc2 = sess.run([intermediate, predicted, label, conv1], feed_dict=feed_dict)
+    #     # stat[labelNp[0]] += 1
+    #     if predictedNp == labelNp:
+    #         equal += 1
+    #         samples.extend(intermediateValues)
+    #         ground.extend(labelNp)
+    #     # if flag:
+    #         c1.extend(weight_fc2)
+    #         # c2.extend(weight_fc3)
+    #         # flag = False
+    #     else:
+    #         neg_samples.extend(intermediateValues)
+    #         neg_predict.extend(predictedNp)
+    #         neg_ground.extend(labelNp)
 
     samples = np.array(samples)
     ground = np.array(ground)
@@ -83,7 +83,7 @@ with tf.Session() as sess:
     neg_ground = np.array(neg_ground)
     print(equal)
     print(samples.shape, ground.shape)
-    print(stat)
+    # print(stat)
     np.save('training_set_neuron_outputs', samples)
     np.save('training_set_labels', ground)
     np.save('training_set_error_outputs', neg_samples)
