@@ -23,7 +23,7 @@ def main(argv=None):
     correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-    saver = tf.train.Saver()
+    saver = tf.train.Saver(max_to_keep=1)
 
     init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
     config = tf.ConfigProto(allow_soft_placement=True)
